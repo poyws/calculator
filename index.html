@@ -1,0 +1,261 @@
+<html><head><base href="Clique aqui para ver o HTML fornecido para a calculadora criativa">
+<meta charset="UTF-8">
+<title>Calculadora Quântica Cartoon</title>
+<style>
+:root {
+  --neon-blue: #00f3ff;
+  --deep-purple: #6a00ff;
+  --bright-yellow: #ffe600;
+  --vibrant-orange: #ff7b00;
+  --soft-shadow: rgba(0,0,0,0.2);
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(45deg, #1a1a2e, #16213e);
+  font-family: 'Roboto', sans-serif;
+}
+
+.calculator {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 0 40px rgba(106,0,255,0.3);
+  position: relative;
+  width: 400px;
+}
+
+.display {
+  background: #000;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.display::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--neon-blue);
+  box-shadow: 0 0 20px var(--neon-blue);
+  animation: scanline 2s linear infinite;
+}
+
+.display input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--neon-blue);
+  font-size: 2rem;
+  text-align: right;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+.btn {
+  background: rgba(255,255,255,0.1);
+  border: none;
+  padding: 20px;
+  font-size: 1.2rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  color: white;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1));
+  transform: translateX(-100%);
+  transition: 0.5s;
+}
+
+.btn:hover::before {
+  transform: translateX(100%);
+}
+
+.btn.operator {
+  background: var(--deep-purple);
+  color: white;
+}
+
+.btn.number {
+  background: rgba(255,255,255,0.2);
+}
+
+.btn.quantum {
+  background: var(--vibrant-orange);
+  font-family: 'Times New Roman', serif;
+}
+
+/* Additional styles for new buttons */
+.btn.clear {
+  background: #ff4444;
+  color: white;
+  font-weight: bold;
+}
+
+.btn.delete {
+  background: #ff8800;
+  color: white;
+  font-weight: bold;
+}
+
+.quantum-characters {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.character {
+  position: absolute;
+  animation: float 3s ease-in-out infinite;
+}
+
+</style>
+</head>
+<body>
+
+<div class="calculator">
+  <div class="display">
+    <input type="text" id="result" readonly value="0">
+  </div>
+  
+  <div class="buttons">
+    <button class="btn clear">C</button>
+    <button class="btn delete">DEL</button>
+    <button class="btn operator">ℏ</button>
+    <button class="btn operator">|ψ⟩</button>
+    <button class="btn operator">⊗</button>
+    
+    <button class="btn number">7</button>
+    <button class="btn number">8</button>
+    <button class="btn number">9</button>
+    <button class="btn operator">÷</button>
+    
+    <button class="btn number">4</button>
+    <button class="btn number">5</button>
+    <button class="btn number">6</button>
+    <button class="btn operator">×</button>
+    
+    <button class="btn number">1</button>
+    <button class="btn number">2</button>
+    <button class="btn number">3</button>
+    <button class="btn operator">-</button>
+    
+    <button class="btn number">0</button>
+    <button class="btn number">.</button>
+    <button class="btn operator">=</button>
+    <button class="btn operator">+</button>
+  </div>
+</div>
+
+<script>
+const display = document.getElementById('result');
+let currentValue = '0';
+let previousValue = '';
+let operation = null;
+let shouldResetDisplay = false;
+
+document.querySelectorAll('.btn').forEach(button => {
+  button.addEventListener('click', () => {
+    const value = button.textContent;
+    
+    if (button.classList.contains('clear')) {
+      currentValue = '0';
+      previousValue = '';
+      operation = null;
+      display.value = currentValue;
+    } else if (button.classList.contains('delete')) {
+      if (currentValue.length > 1) {
+        currentValue = currentValue.slice(0, -1);
+      } else {
+        currentValue = '0';
+      }
+      display.value = currentValue;
+    } else if (button.classList.contains('number')) {
+      if (shouldResetDisplay) {
+        currentValue = value;
+        shouldResetDisplay = false;
+      } else {
+        currentValue = currentValue === '0' ? value : currentValue + value;
+      }
+      display.value = currentValue;
+    } else if (button.classList.contains('operator')) {
+      if (value === '=') {
+        if (operation && previousValue) {
+          currentValue = calculate(previousValue, currentValue, operation);
+          display.value = currentValue;
+          previousValue = '';
+          operation = null;
+        }
+      } else if (['÷', '×', '-', '+'].includes(value)) {
+        previousValue = currentValue;
+        operation = value;
+        shouldResetDisplay = true;
+      } else {
+        currentValue += value;
+        display.value = currentValue;
+      }
+    }
+  });
+});
+
+function calculate(a, b, op) {
+  a = parseFloat(a);
+  b = parseFloat(b);
+  switch(op) {
+    case '+': return (a + b).toString();
+    case '-': return (a - b).toString();
+    case '×': return (a * b).toString();
+    case '÷': return (a / b).toString();
+    default: return b.toString();
+  }
+}
+
+document.querySelectorAll('.btn').forEach(button => {
+  button.addEventListener('mouseenter', () => {
+    button.style.transform = 'scale(1.1)';
+    button.style.boxShadow = '0 0 15px rgba(106,0,255,0.5)';
+  });
+  
+  button.addEventListener('mouseleave', () => {
+    button.style.transform = 'scale(1)';
+    button.style.boxShadow = 'none';
+  });
+});
+</script>
+
+</body></html>
