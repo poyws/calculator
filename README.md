@@ -43,10 +43,10 @@ Esta é uma **calculadora gráfica interativa** desenvolvida em HTML, CSS e Java
 
 Abra o arquivo HTML: Abra o arquivo index.html em um navegador da web.
 
-🤝 Contribuições
+🤝 Contribuições:
 Contribuições são bem-vindas! Sinta-se à vontade para abrir uma issue ou enviar um pull request.
 
-📄 Licença
+📄 Licença:
 Este projeto é licenciado sob a MIT License - consulte o arquivo para mais detalhes.
 
 ![image](https://github.com/user-attachments/assets/45a71e21-87f4-4038-957a-853297633ee5)
