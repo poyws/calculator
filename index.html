@@ -1,292 +1,232 @@
-<html><head><base href="Calculadora">
-<meta charset="UTF-8">
-<title>Calculadora Quântica Cartoon</title>
+<html><head><base href="." /><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.js"></script>
 <style>
 :root {
   --neon-blue: #00f3ff;
-  --deep-purple: #6a00ff;
-  --bright-yellow: #ffe600;
-  --vibrant-orange: #ff7b00;
-  --soft-shadow: rgba(0,0,0,0.2);
+  --neon-purple: #7b2cf4;
+  --dark-bg: #1a1a1a;
 }
 
 body {
-  min-height: 100vh;
+  background: var(--dark-bg);
+  color: white;
+  font-family: 'Arial', sans-serif;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  background: linear-gradient(45deg, #1a1a2e, #16213e);
-  font-family: 'Roboto', sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+}
+
+.calculator-container {
+  display: flex;
+  gap: 20px;
+  max-width: 1200px;
+  padding: 20px;
+  background: #242424;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
 }
 
 .calculator {
-  min-height: 600px;
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 2rem;
-  box-shadow: 
-    0 0 40px rgba(106,0,255,0.3),
-    inset 0 0 20px rgba(255,255,255,0.1);
+  background: #2a2a2a;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid var(--neon-blue);
+  width: 300px;
 }
 
 .display {
-  height: 100px;
-  margin-bottom: 30px;
-  border: 2px solid rgba(255,255,255,0.1);
-  box-shadow: 
-    inset 0 0 20px rgba(0,243,255,0.2),
-    0 0 15px rgba(0,243,255,0.3);
-}
-
-.display::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--neon-blue);
-  box-shadow: 0 0 20px var(--neon-blue);
-  animation: scanline 2s linear infinite;
-}
-
-.display input {
-  width: 100%;
-  background: transparent;
+  width: calc(100% - 30px);
+  padding: 15px;
+  margin-bottom: 20px;
+  background: #333;
   border: none;
+  border-radius: 5px;
   color: var(--neon-blue);
-  font-size: 2rem;
+  font-size: 1.5em;
   text-align: right;
-  font-family: 'Share Tech Mono', monospace;
+}
+
+.function-input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin-bottom: 10px;
+  background: #333;
+  border: 1px solid var(--neon-purple);
+  border-radius: 5px;
+  color: white;
 }
 
 .buttons {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
-  padding: 30px;
-  background: rgba(0,0,0,0.2);
-  border-radius: 15px;
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
-  margin: 0 10px;
+  gap: 10px;
 }
 
-.btn {
-  height: 65px;
-  background: rgba(255,255,255,0.1);
-  border: none;
+button {
   padding: 15px;
-  font-size: 1.2rem;
-  border-radius: 10px;
+  border: none;
+  border-radius: 5px;
+  background: #333;
+  color: white;
+  font-size: 1.2em;
   cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  color: white;
-  box-shadow: 
-    0 5px 15px rgba(0,0,0,0.2),
-    inset 0 -5px 15px rgba(0,0,0,0.2),
-    inset 0 5px 15px rgba(255,255,255,0.1);
-  text-shadow: 0 0 5px rgba(255,255,255,0.5);
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.btn:active {
-  transform: translateY(2px);
-  box-shadow: 
-    0 2px 5px rgba(0,0,0,0.2),
-    inset 0 -2px 5px rgba(0,0,0,0.2);
-}
-
-.btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
+  transition: all 0.2s ease;
   width: 100%;
-  height: 100%;
-  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1));
-  transform: translateX(-100%);
-  transition: 0.5s;
 }
 
-.btn:hover::before {
-  transform: translateX(100%);
+button:hover {
+  background: var(--neon-purple);
+  box-shadow: 0 0 10px var(--neon-purple);
 }
 
-.btn.operator {
-  background: var(--deep-purple);
-  color: white;
+.operator {
+  background: #444;
+  color: var(--neon-blue);
 }
 
-.btn.number {
-  background: rgba(255,255,255,0.2);
+.equals {
+  background: var(--neon-purple);
+  grid-column: span 2;
 }
 
-.btn.quantum {
-  background: var(--vibrant-orange);
-  font-family: 'Times New Roman', serif;
+canvas {
+  background: #242424;
+  border: 1px solid var(--neon-blue);
+  border-radius: 10px;
+  width: 500px;
+  height: 500px;
 }
 
-/* Additional styles for new buttons */
-.btn.clear {
-  background: #ff4444;
-  color: white;
-  font-weight: bold;
-}
-
-.btn.delete {
-  background: #ff8800;
-  color: white;
-  font-weight: bold;
-}
-
-/* Remove quantum-decorator and quantum-circle styles */
-.quantum-decorator {
-  display: none;
-}
-
-.quantum-circle {
-  display: none;
-}
-
-@keyframes scanline {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100%); }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 0.5; }
-  50% { transform: scale(1.2); opacity: 0.2; }
-  100% { transform: scale(1); opacity: 0.5; }
-}
-
-.character {
-  position: absolute;
-  animation: float 3s ease-in-out infinite;
+.graph-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 </style>
 </head>
 <body>
-
-<div class="calculator">
-  <div class="display">
-    <input type="text" id="result" readonly value="0">
+<div class="calculator-container">
+  <div class="calculator">
+    <input type="text" class="display" id="display" readonly>
+    <input type="text" class="function-input" id="function-input" placeholder="Digite uma função (ex: x^2)">
+    <div class="buttons">
+      <button onclick="appendNumber('7')">7</button>
+      <button onclick="appendNumber('8')">8</button>
+      <button onclick="appendNumber('9')">9</button>
+      <button class="operator" onclick="appendOperator('/')">/</button>
+      
+      <button onclick="appendNumber('4')">4</button>
+      <button onclick="appendNumber('5')">5</button>
+      <button onclick="appendNumber('6')">6</button>
+      <button class="operator" onclick="appendOperator('*')">×</button>
+      
+      <button onclick="appendNumber('1')">1</button>
+      <button onclick="appendNumber('2')">2</button>
+      <button onclick="appendNumber('3')">3</button>
+      <button class="operator" onclick="appendOperator('-')">-</button>
+      
+      <button onclick="appendNumber('0')">0</button>
+      <button onclick="appendNumber('.')">.</button>
+      <button class="equals" onclick="calculate()">=</button>
+      <button class="operator" onclick="appendOperator('+')">+</button>
+    </div>
+    <div class="graph-controls">
+      <button onclick="plotFunction()">Plotar Gráfico</button>
+      <button onclick="clearCanvas()">Limpar Gráfico</button>
+    </div>
   </div>
-  
-  <div class="buttons">
-    <button class="btn clear">C</button>
-    <button class="btn delete">DEL</button>
-    <button class="btn operator">ℏ</button>
-    <button class="btn operator">|ψ⟩</button>
-    <button class="btn operator">⊗</button>
-    
-    <button class="btn number">7</button>
-    <button class="btn number">8</button>
-    <button class="btn number">9</button>
-    <button class="btn operator">÷</button>
-    
-    <button class="btn number">4</button>
-    <button class="btn number">5</button>
-    <button class="btn number">6</button>
-    <button class="btn operator">×</button>
-    
-    <button class="btn number">1</button>
-    <button class="btn number">2</button>
-    <button class="btn number">3</button>
-    <button class="btn operator">-</button>
-    
-    <button class="btn number">0</button>
-    <button class="btn number">.</button>
-    <button class="btn operator">=</button>
-    <button class="btn operator">+</button>
-  </div>
+  <canvas id="graphCanvas" width="500" height="500"></canvas>
 </div>
 
 <script>
-const display = document.getElementById('result');
-let currentValue = '0';
-let previousValue = '';
-let operation = null;
-let shouldResetDisplay = false;
+let display = document.getElementById('display');
+const canvas = document.getElementById('graphCanvas');
+const ctx = canvas.getContext('2d');
+let currentExpression = '';
 
-document.querySelectorAll('.btn').forEach(button => {
-  button.addEventListener('click', () => {
-    const value = button.textContent;
-    
-    if (button.classList.contains('clear')) {
-      currentValue = '0';
-      previousValue = '';
-      operation = null;
-      display.value = currentValue;
-    } else if (button.classList.contains('delete')) {
-      if (currentValue.length > 1) {
-        currentValue = currentValue.slice(0, -1);
-      } else {
-        currentValue = '0';
-      }
-      display.value = currentValue;
-    } else if (button.classList.contains('number')) {
-      if (shouldResetDisplay) {
-        currentValue = value;
-        shouldResetDisplay = false;
-      } else {
-        currentValue = currentValue === '0' ? value : currentValue + value;
-      }
-      display.value = currentValue;
-    } else if (button.classList.contains('operator')) {
-      if (value === '=') {
-        if (operation && previousValue) {
-          currentValue = calculate(previousValue, currentValue, operation);
-          display.value = currentValue;
-          previousValue = '';
-          operation = null;
-        }
-      } else if (['÷', '×', '-', '+'].includes(value)) {
-        previousValue = currentValue;
-        operation = value;
-        shouldResetDisplay = true;
-      } else {
-        currentValue += value;
-        display.value = currentValue;
-      }
-    }
-  });
-});
-
-function calculate(a, b, op) {
-  a = parseFloat(a);
-  b = parseFloat(b);
-  switch(op) {
-    case '+': return (a + b).toString();
-    case '-': return (a - b).toString();
-    case '×': return (a * b).toString();
-    case '÷': return (a / b).toString();
-    default: return b.toString();
-  }
+function appendNumber(num) {
+    display.value += num;
 }
 
-document.querySelectorAll('.btn').forEach(button => {
-  button.addEventListener('mouseenter', () => {
-    button.style.transform = 'scale(1.1)';
-    button.style.boxShadow = '0 0 15px rgba(106,0,255,0.5)';
-  });
-  
-  button.addEventListener('mouseleave', () => {
-    button.style.transform = 'scale(1)';
-    button.style.boxShadow = 'none';
-  });
-});
-</script>
+function appendOperator(op) {
+    display.value += op;
+}
 
+function calculate() {
+    try {
+        let result = math.evaluate(display.value);
+        if (Math.abs(result) > 1e10) {
+            result = result.toExponential(5);
+        } else {
+            result = parseFloat(result.toFixed(8));
+        }
+        display.value = result;
+    } catch (error) {
+        display.value = 'Erro';
+    }
+}
+
+function clearCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawAxes();
+}
+
+function drawAxes() {
+    ctx.beginPath();
+    ctx.strokeStyle = '#666';
+    ctx.moveTo(0, canvas.height/2);
+    ctx.lineTo(canvas.width, canvas.height/2);
+    ctx.moveTo(canvas.width/2, 0);
+    ctx.lineTo(canvas.width/2, canvas.height);
+    ctx.stroke();
+}
+
+function plotFunction() {
+    const functionString = document.getElementById('function-input').value;
+    try {
+        const f = math.compile(functionString);
+        clearCanvas();
+        
+        ctx.beginPath();
+        ctx.strokeStyle = '#00f3ff';
+        ctx.lineWidth = 2;
+        
+        const scale = 20;
+        let lastY;
+        
+        for (let i = -10; i <= 10; i += 0.1) {
+            const x = i;
+            let y;
+            try {
+                y = f.evaluate({x: x});
+                if (!isFinite(y)) continue;
+                if (y > 10) y = 10;
+                if (y < -10) y = -10;
+                
+                const canvasX = (x + 10) * (canvas.width/scale);
+                const canvasY = canvas.height - ((y + 10) * (canvas.height/scale));
+                
+                if (i === -10 || !isFinite(lastY)) {
+                    ctx.moveTo(canvasX, canvasY);
+                } else {
+                    ctx.lineTo(canvasX, canvasY);
+                }
+                lastY = y;
+            } catch (error) {
+                continue;
+            }
+        }
+        ctx.stroke();
+    } catch (error) {
+        alert('Função inválida. Tente novamente.');
+    }
+}
+
+// Initialize
+drawAxes();
+</script>
 </body></html>
