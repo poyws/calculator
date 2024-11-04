@@ -1,232 +1,45 @@
-<html><head><base href="." /><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.js"></script>
-<style>
-:root {
-  --neon-blue: #00f3ff;
-  --neon-purple: #7b2cf4;
-  --dark-bg: #1a1a1a;
-}
-
-body {
-  background: var(--dark-bg);
-  color: white;
-  font-family: 'Arial', sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-  margin: 0;
-  padding: 20px;
-}
-
-.calculator-container {
-  display: flex;
-  gap: 20px;
-  max-width: 1200px;
-  padding: 20px;
-  background: #242424;
-  border-radius: 15px;
-  box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
-}
-
-.calculator {
-  background: #2a2a2a;
-  padding: 20px;
-  border-radius: 10px;
-  border: 1px solid var(--neon-blue);
-  width: 300px;
-}
-
-.display {
-  width: calc(100% - 30px);
-  padding: 15px;
-  margin-bottom: 20px;
-  background: #333;
-  border: none;
-  border-radius: 5px;
-  color: var(--neon-blue);
-  font-size: 1.5em;
-  text-align: right;
-}
-
-.function-input {
-  width: calc(100% - 20px);
-  padding: 10px;
-  margin-bottom: 10px;
-  background: #333;
-  border: 1px solid var(--neon-purple);
-  border-radius: 5px;
-  color: white;
-}
-
-.buttons {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
-
-button {
-  padding: 15px;
-  border: none;
-  border-radius: 5px;
-  background: #333;
-  color: white;
-  font-size: 1.2em;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: 100%;
-}
-
-button:hover {
-  background: var(--neon-purple);
-  box-shadow: 0 0 10px var(--neon-purple);
-}
-
-.operator {
-  background: #444;
-  color: var(--neon-blue);
-}
-
-.equals {
-  background: var(--neon-purple);
-  grid-column: span 2;
-}
-
-canvas {
-  background: #242424;
-  border: 1px solid var(--neon-blue);
-  border-radius: 10px;
-  width: 500px;
-  height: 500px;
-}
-
-.graph-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-</style>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Gráfica</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.js"></script>
 </head>
 <body>
-<div class="calculator-container">
-  <div class="calculator">
-    <input type="text" class="display" id="display" readonly>
-    <input type="text" class="function-input" id="function-input" placeholder="Digite uma função (ex: x^2)">
-    <div class="buttons">
-      <button onclick="appendNumber('7')">7</button>
-      <button onclick="appendNumber('8')">8</button>
-      <button onclick="appendNumber('9')">9</button>
-      <button class="operator" onclick="appendOperator('/')">/</button>
-      
-      <button onclick="appendNumber('4')">4</button>
-      <button onclick="appendNumber('5')">5</button>
-      <button onclick="appendNumber('6')">6</button>
-      <button class="operator" onclick="appendOperator('*')">×</button>
-      
-      <button onclick="appendNumber('1')">1</button>
-      <button onclick="appendNumber('2')">2</button>
-      <button onclick="appendNumber('3')">3</button>
-      <button class="operator" onclick="appendOperator('-')">-</button>
-      
-      <button onclick="appendNumber('0')">0</button>
-      <button onclick="appendNumber('.')">.</button>
-      <button class="equals" onclick="calculate()">=</button>
-      <button class="operator" onclick="appendOperator('+')">+</button>
-    </div>
-    <div class="graph-controls">
-      <button onclick="plotFunction()">Plotar Gráfico</button>
-      <button onclick="clearCanvas()">Limpar Gráfico</button>
-    </div>
-  </div>
-  <canvas id="graphCanvas" width="500" height="500"></canvas>
-</div>
-
-<script>
-let display = document.getElementById('display');
-const canvas = document.getElementById('graphCanvas');
-const ctx = canvas.getContext('2d');
-let currentExpression = '';
-
-function appendNumber(num) {
-    display.value += num;
-}
-
-function appendOperator(op) {
-    display.value += op;
-}
-
-function calculate() {
-    try {
-        let result = math.evaluate(display.value);
-        if (Math.abs(result) > 1e10) {
-            result = result.toExponential(5);
-        } else {
-            result = parseFloat(result.toFixed(8));
-        }
-        display.value = result;
-    } catch (error) {
-        display.value = 'Erro';
-    }
-}
-
-function clearCanvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawAxes();
-}
-
-function drawAxes() {
-    ctx.beginPath();
-    ctx.strokeStyle = '#666';
-    ctx.moveTo(0, canvas.height/2);
-    ctx.lineTo(canvas.width, canvas.height/2);
-    ctx.moveTo(canvas.width/2, 0);
-    ctx.lineTo(canvas.width/2, canvas.height);
-    ctx.stroke();
-}
-
-function plotFunction() {
-    const functionString = document.getElementById('function-input').value;
-    try {
-        const f = math.compile(functionString);
-        clearCanvas();
-        
-        ctx.beginPath();
-        ctx.strokeStyle = '#00f3ff';
-        ctx.lineWidth = 2;
-        
-        const scale = 20;
-        let lastY;
-        
-        for (let i = -10; i <= 10; i += 0.1) {
-            const x = i;
-            let y;
-            try {
-                y = f.evaluate({x: x});
-                if (!isFinite(y)) continue;
-                if (y > 10) y = 10;
-                if (y < -10) y = -10;
+    <div class="calculator-container">
+        <div class="calculator">
+            <input type="text" class="display" id="display" readonly>
+            <input type="text" class="function-input" id="function-input" placeholder="Digite uma função (ex: x^2)">
+            <div class="buttons">
+                <button onclick="appendNumber('7')">7</button>
+                <button onclick="appendNumber('8')">8</button>
+                <button onclick="appendNumber('9')">9</button>
+                <button class="operator" onclick="appendOperator('/')">/</button>
                 
-                const canvasX = (x + 10) * (canvas.width/scale);
-                const canvasY = canvas.height - ((y + 10) * (canvas.height/scale));
+                <button onclick="appendNumber('4')">4</button>
+                <button onclick="appendNumber('5')">5</button>
+                <button onclick="appendNumber('6')">6</button>
+                <button class="operator" onclick="appendOperator('*')">×</button>
                 
-                if (i === -10 || !isFinite(lastY)) {
-                    ctx.moveTo(canvasX, canvasY);
-                } else {
-                    ctx.lineTo(canvasX, canvasY);
-                }
-                lastY = y;
-            } catch (error) {
-                continue;
-            }
-        }
-        ctx.stroke();
-    } catch (error) {
-        alert('Função inválida. Tente novamente.');
-    }
-}
-
-// Initialize
-drawAxes();
-</script>
-</body></html>
+                <button onclick="appendNumber('1')">1</button>
+                <button onclick="appendNumber('2')">2</button>
+                <button onclick="appendNumber('3')">3</button>
+                <button class="operator" onclick="appendOperator('-')">-</button>
+                
+                <button onclick="appendNumber('0')">0</button>
+                <button onclick="appendNumber('.')">.</button>
+                <button class="equals" onclick="calculate()">=</button>
+                <button class="operator" onclick="appendOperator('+')">+</button>
+            </div>
+            <div class="graph-controls">
+                <button onclick="plotFunction()">Plotar Gráfico</button>
+                <button onclick="clearCanvas()">Limpar Gráfico</button>
+            </div>
+        </div>
+        <canvas id="graphCanvas" width="500" height="500"></canvas>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
