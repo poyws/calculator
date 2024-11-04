@@ -49,3 +49,4 @@ Contribuições são bem-vindas! Sinta-se à vontade para abrir uma issue ou env
 📄 Licença
 Este projeto é licenciado sob a MIT License - consulte o arquivo para mais detalhes.
 
+![image](https://github.com/user-attachments/assets/3cce3414-0a17-4ec0-8b8b-1381aa46ee32)
